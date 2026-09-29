@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHealth - Developer Analytics</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <span>◆</span> GitHealth
+        </div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <p class="tagline">DEVELOPER ANALYTICS PLATFORM</p>
+
+                <h1>Understand Your <span>GitHub Journey.</span></h1>
+
+                <p class="hero-description">
+                    GitHealth analyzes your GitHub activity and
+                    transforms your repositories, languages and
+                    contributions into meaningful developer insights.
+                </p>
+
+                <div class="analysis-container">
+                    <div class="search-panel">
+                        <h2>Analyze a Developer</h2>
+
+                        <p>
+                            Enter a public GitHub username to analyze
+                            their developer profile.
+                        </p>
+
+                        <div class="search-box">
+                            <input
+                                type="text"
+                                id="username"
+                                placeholder="Enter GitHub username"
+                            >
+
+                            <button onclick="analyzeGitHub()">
+                                Analyze
+                            </button>
+                        </div>
+
+                        <p class="example">
+                            Try it with: <strong>octocat</strong>
+                        </p>
+                    </div>
+
+                    <div class="result-panel" id="result">
+                        <div id="profileResult">
+                            <div class="empty-result">
+                                <div class="empty-icon">◆</div>
+
+                                <h3>Your analysis will appear here</h3>
+
+                                <p>
+                                    Enter a GitHub username and click
+                                    Analyze to get developer insights.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div id="repositoriesResult"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2>What GitHealth analyzes</h2>
+
+            <div class="feature-container">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Developer Analytics</h3>
+                    <p>
+                        Understand your repositories, stars, forks
+                        and development activity.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💻</div>
+                    <h3>Skill Detection</h3>
+                    <p>
+                        Discover programming languages and
+                        technologies represented in your projects.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Developer Insights</h3>
+                    <p>
+                        Turn GitHub activity into useful insights
+                        about your developer profile.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <h2>How GitHealth works</h2>
+
+            <div class="steps">
+                <div class="step">
+                    <span>01</span>
+                    <h3>Enter Username</h3>
+                    <p>Enter a public GitHub username.</p>
+                </div>
+
+                <div class="step">
+                    <span>02</span>
+                    <h3>Analyze GitHub</h3>
+                    <p>GitHealth collects public GitHub data.</p>
+                </div>
+
+                <div class="step">
+                    <span>03</span>
+                    <h3>Get Insights</h3>
+                    <p>View meaningful developer analytics.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 GitHealth · Developer Analytics Platform</p>
+    </footer>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
