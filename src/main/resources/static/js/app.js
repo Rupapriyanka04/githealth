@@ -2,6 +2,7 @@ let currentUsername="";
 let allRepositories=[];
 let filteredRepositories=[];
 let visibleRepositoryCount=10;
+let currentActivity=[];
 
 async function analyzeGitHub(){
     const analyzeButton=document.querySelector(".search-box button");
@@ -39,28 +40,31 @@ async function analyzeGitHub(){
     visibleRepositoryCount=10;
 
     try{
-        const [profileResponse,repositoriesResponse,analyticsResponse,summaryResponse]=await Promise.all([
-            fetch(`/github/${username}`),
-            fetch(`/github/${username}/repositories`),
-            fetch(`/github/${username}/analytics`),
-            fetch(`/github/${username}/summary`)
+        const [profileResponse,repositoriesResponse,analyticsResponse,summaryResponse,activityResponse]=await Promise.all([
+    fetch(`/github/${username}`),
+    fetch(`/github/${username}/repositories`),
+    fetch(`/github/${username}/analytics`),
+    fetch(`/github/${username}/summary`),
+    fetch(`/github/${username}/activity`)
+
         ]);
 
         if(!profileResponse.ok) throw new Error("GitHub user not found.");
         if(!repositoriesResponse.ok) throw new Error("Unable to load repositories.");
         if(!analyticsResponse.ok) throw new Error("Unable to load analytics.");
         if(!summaryResponse.ok) throw new Error("Unable to load developer summary.");
+        if(!activityResponse.ok) throw new Error("Unable to load GitHub activity.");
 
         const profile=await profileResponse.json();
         allRepositories=await repositoriesResponse.json();
         filteredRepositories=[...allRepositories];
 
         const analytics=await analyticsResponse.json();
-        const summary=await summaryResponse.json();
-
+const summary=await summaryResponse.json();
+currentActivity=await activityResponse.json();
         displayProfile(profile);
         displayRepositories(filteredRepositories);
-        displayAnalytics(analytics,summary);
+       displayAnalytics(analytics,summary,currentActivity);
 
         analyzeButton.disabled=false;
         analyzeButton.textContent="Analyze";
@@ -263,7 +267,7 @@ function escapeHtml(value){
         .replace(/'/g,"&#039;");
 }
 
-function displayAnalytics(analytics,summary){
+function displayAnalytics(analytics,summary,activity){
     const container=document.getElementById("repositoriesResult");
 
     container.insertAdjacentHTML("afterbegin",`
@@ -271,6 +275,7 @@ function displayAnalytics(analytics,summary){
         ${createProfileSummary(summary)}
         ${createGitHealthScore(analytics)}
         ${createActivityInsights(analytics)}
+        ${createGitHubActivity(activity)}
         ${createTechnologyProfile(analytics)}
         ${createRepositoryQuality(analytics)}
         ${createSkillEvidence(analytics)}
@@ -294,6 +299,45 @@ function createDashboardNavigation(){
             </div>
         </div>
     `;
+}
+
+function createGitHubActivity(activity){
+    const events=activity||[];
+
+    return `
+        <div style="margin-bottom:30px;padding:20px;border-radius:16px;background:#fafaff;border:1px solid #eeeeee;text-align:left">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:18px">
+                <div>
+                    <h3 style="margin:0 0 6px;font-size:18px;color:#17172b">GitHub Activity Timeline</h3>
+                    <p style="margin:0;color:#777;font-size:12px;line-height:1.5">Recent public GitHub events detected for this developer.</p>
+                </div>
+                <span style="padding:7px 10px;border-radius:20px;background:#eee9ff;color:#5b3fd1;font-size:11px;font-weight:bold;white-space:nowrap">${events.length} Events</span>
+            </div>
+            ${
+                events.length
+                ? `<div>${events.slice(0,10).map((event,index)=>`
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eeeeee">
+                        <div style="width:30px;height:30px;border-radius:50%;background:#eee9ff;color:#5b3fd1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold">${index+1}</div>
+                        <div style="flex:1">
+                            <strong style="display:block;color:#17172b;font-size:12px">${formatActivityType(event.type)}</strong>
+                            <span style="display:block;margin-top:4px;color:#777;font-size:11px">${escapeHtml(event.repo||"Unknown repository")}</span>
+                        </div>
+                        <span style="color:#888;font-size:10px">${formatGitHubDate(event.createdAt)}</span>
+                    </div>
+                `).join("")}</div>`
+                : `<p class="activity-empty">No recent public GitHub activity detected.</p>`
+            }
+        </div>
+    `;
+}
+
+function formatActivityType(type){
+    if(!type) return "GitHub Activity";
+
+    return type
+        .replace(/Event$/,"")
+        .replace(/([A-Z])/g," $1")
+        .trim();
 }
 
 function createProfileSummary(summary){

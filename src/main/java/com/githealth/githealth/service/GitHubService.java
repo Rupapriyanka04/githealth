@@ -14,6 +14,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GitHubService {
@@ -239,4 +240,33 @@ public class GitHubService {
 
         return value.asInt();
     }
+    public List<Map<String, Object>> getActivity(String username) throws Exception {
+    String url = "https://api.github.com/users/" + username + "/events/public?per_page=30";
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("Accept", "application/vnd.github+json")
+            .header("User-Agent", "GitHealth")
+            .GET()
+            .build();
+
+    HttpResponse<String> response =
+            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+    if (response.statusCode() != 200) {
+        throw createGitHubException(response);
+    }
+
+    JsonNode root = objectMapper.readTree(response.body());
+    List<Map<String, Object>> activity = new ArrayList<>();
+
+    for (JsonNode event : root) {
+        Map<String, Object> item = new java.util.LinkedHashMap<>();
+        item.put("type", getText(event, "type"));
+        item.put("repo", event.path("repo").path("name").asText());
+        item.put("createdAt", getText(event, "created_at"));
+        activity.add(item);
+    }
+
+    return activity;
+}
 }

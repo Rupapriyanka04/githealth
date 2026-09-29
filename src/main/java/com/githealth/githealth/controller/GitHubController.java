@@ -37,7 +37,10 @@ public class GitHubController {
         this.skillRoadmapService = skillRoadmapService;
         this.profileSummaryService = profileSummaryService;
     }
-
+    @GetMapping("/{username}/activity")
+    public List<Map<String, Object>> getActivity(@PathVariable String username) throws Exception {
+    return gitHubService.getActivity(username);
+    }
     @GetMapping("/{username}")
     public GitHubProfileResponse getUser(@PathVariable String username) throws Exception {
         return gitHubService.getUser(username);
